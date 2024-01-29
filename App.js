@@ -1,43 +1,31 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import Entypo from "@expo/vector-icons/Entypo";
-import * as SplashScreen from "expo-splash-screen";
-import * as Font from "expo-font";
-
-SplashScreen.preventAutoHideAsync();
+import LottieView from "lottie-react-native";
 
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
+  const [afficherImage, setAfficherImage] = useState(true);
 
   useEffect(() => {
-    async function prepare() {
-      try {
-        await Font.loadAsync(Entypo.font);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        setAppIsReady(true);
-      }
-    }
+    const masquerImage = () => {
+      setAfficherImage(false);
+    };
 
-    prepare();
+    const timeoutId = setTimeout(masquerImage, 10000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, []);
-
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) {
-      await SplashScreen.hideAsync();
-    }
-  }, [appIsReady]);
-
-  if (!appIsReady) {
-    return null;
-  }
-
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      {afficherImage && (
+        <LottieView
+          source={require("./assets/animation.json")}
+          style={{ width: "100%", height: "100%" }}
+          autoPlay
+          loop
+        />
+      )}
     </View>
   );
 }
